@@ -1,0 +1,5 @@
+site_name: Homelab Backstage
+docs_dir: docs
+nav:
+  - Architecture: architecture.md
+  - Authentication: authentication.md

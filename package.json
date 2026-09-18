@@ -17,9 +17,10 @@
     "test:all": "backstage-cli repo test --coverage",
     "test:e2e": "playwright test",
     "fix": "backstage-cli repo fix",
-    "lint": "backstage-cli repo lint --since origin/master",
+    "lint": "backstage-cli repo lint --since origin/main",
     "lint:all": "backstage-cli repo lint",
     "prettier:check": "prettier --check .",
+    "ci": "yarn prettier:check && yarn lint:all && yarn tsc:full && yarn test:all --watchAll=false",
     "new": "backstage-cli new"
   },
   "backstage": {
