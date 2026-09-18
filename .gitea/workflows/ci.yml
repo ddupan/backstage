@@ -29,7 +29,10 @@ jobs:
   image:
     if: gitea.event_name == 'push' && gitea.ref == 'refs/heads/main'
     needs: verify
-    runs-on: [self-hosted, vm]
+    runs-on: self-hosted
+    container:
+      volumes:
+        - /run/spire/agent-sockets:/run/spire/agent-sockets:ro
     permissions:
       contents: read
     steps:
@@ -38,6 +41,18 @@ jobs:
         with:
           name: backend-bundle
           path: packages/backend/dist
+      - name: Fetch pinned SPIRE CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive=/tmp/spire.tar.gz
+          curl --fail --location --silent --show-error \
+            --output "$archive" \
+            https://github.com/spiffe/spire/releases/download/v1.15.3/spire-1.15.3-linux-amd64-musl.tar.gz
+          printf '%s  %s\n' \
+            ca1a4d1155317bdd2afc7f36663828a10410c7c840e54725b90b4064b0a301c7 \
+            "$archive" | sha256sum --check --status
+          tar -xzf "$archive" -C /tmp spire-1.15.3/bin/spire-agent
       - name: Log in to Zot with a short-lived JWT-SVID
         shell: bash
         run: |
@@ -51,7 +66,7 @@ jobs:
           trap cleanup EXIT
           export DOCKER_CONFIG="$docker_config"
 
-          /opt/spire/bin/spire-agent api fetch jwt \
+          /tmp/spire-1.15.3/bin/spire-agent api fetch jwt \
             -audience zot \
             -socketPath /run/spire/agent-sockets/spire-agent.sock \
             -output json >"$jwt_file"
