@@ -30,7 +30,7 @@ jobs:
   image:
     if: gitea.event_name == 'push' && gitea.ref == 'refs/heads/main'
     needs: verify
-    runs-on: self-hosted
+    runs-on: [self-hosted, vm]
     container:
       volumes:
         - /run/spire/agent-sockets:/run/spire/agent-sockets:ro
