@@ -20,7 +20,8 @@ jobs:
       - run: yarn install --immutable
       - run: yarn ci
       - run: yarn build:backend
-      - uses: actions/upload-artifact@v4
+      # Gitea Actions does not implement GitHub's artifact v4 protocol yet.
+      - uses: actions/upload-artifact@v3
         with:
           name: backend-bundle
           path: packages/backend/dist/*.tar.gz
@@ -37,7 +38,7 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v3
         with:
           name: backend-bundle
           path: packages/backend/dist
@@ -85,7 +86,7 @@ jobs:
             ${{ env.IMAGE }}:latest
       - name: Record immutable image reference
         run: printf '%s@%s\n' "$IMAGE" "${{ steps.build.outputs.digest }}" | tee image-ref.txt
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v3
         with:
           name: image-reference
           path: image-ref.txt
