@@ -10,7 +10,7 @@ env:
 
 jobs:
   verify:
-    runs-on: self-hosted
+    runs-on: [self-hosted, pod]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
