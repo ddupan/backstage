@@ -24,6 +24,10 @@ backend:
   # config options: https://node-postgres.com/apis/client
   database:
     client: pg
+    # Keep one database and isolate plugins with PostgreSQL schemas. This avoids
+    # granting the application role cluster-wide CREATEDB privileges.
+    pluginDivisionMode: schema
+    schemaPrefix: backstage_
     connection:
       host: ${POSTGRES_HOST}
       port: ${POSTGRES_PORT}
