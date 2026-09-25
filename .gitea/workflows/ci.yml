@@ -6,7 +6,8 @@ on:
     branches: [main]
 
 env:
-  IMAGE: zot-push.ad.ddupan.top/panxiao81/backstage
+  PUSH_IMAGE: zot-push.ad.ddupan.top/panxiao81/backstage
+  PULL_IMAGE: zot.ad.ddupan.top/panxiao81/backstage
 
 jobs:
   verify:
@@ -30,10 +31,7 @@ jobs:
   image:
     if: gitea.event_name == 'push' && gitea.ref == 'refs/heads/main'
     needs: verify
-    runs-on: [self-hosted, vm]
-    container:
-      volumes:
-        - /run/spire/agent-sockets:/run/spire/agent-sockets:ro
+    runs-on: [self-hosted, pod]
     permissions:
       contents: read
     steps:
@@ -42,18 +40,6 @@ jobs:
         with:
           name: backend-bundle
           path: packages/backend/dist
-      - name: Fetch pinned SPIRE CLI
-        shell: bash
-        run: |
-          set -euo pipefail
-          archive=/tmp/spire.tar.gz
-          curl --fail --location --silent --show-error \
-            --output "$archive" \
-            https://github.com/spiffe/spire/releases/download/v1.15.3/spire-1.15.3-linux-amd64-musl.tar.gz
-          printf '%s  %s\n' \
-            ca1a4d1155317bdd2afc7f36663828a10410c7c840e54725b90b4064b0a301c7 \
-            "$archive" | sha256sum --check --status
-          tar -xzf "$archive" -C /tmp spire-1.15.3/bin/spire-agent
       - name: Log in to Zot with a short-lived JWT-SVID
         shell: bash
         run: |
@@ -62,12 +48,13 @@ jobs:
           docker_config="$(mktemp -d)"
           jwt_file="$(mktemp)"
           cleanup() {
-            rm -rf -- "$docker_config" "$jwt_file"
+            rm -f -- "$jwt_file"
           }
           trap cleanup EXIT
           export DOCKER_CONFIG="$docker_config"
+          printf 'DOCKER_CONFIG=%s\n' "$docker_config" >>"$GITHUB_ENV"
 
-          /tmp/spire-1.15.3/bin/spire-agent api fetch jwt \
+          spire-agent api fetch jwt \
             -audience zot \
             -socketPath /run/spire/agent-sockets/spire-agent.sock \
             -output json >"$jwt_file"
@@ -82,12 +69,15 @@ jobs:
           file: packages/backend/Dockerfile
           push: true
           tags: |
-            ${{ env.IMAGE }}:${{ gitea.sha }}
-            ${{ env.IMAGE }}:latest
+            ${{ env.PUSH_IMAGE }}:${{ gitea.sha }}
+            ${{ env.PUSH_IMAGE }}:latest
       - name: Record immutable image reference
-        run: printf '%s@%s\n' "$IMAGE" "${{ steps.build.outputs.digest }}" | tee image-ref.txt
+        run: printf '%s@%s\n' "$PULL_IMAGE" "${{ steps.build.outputs.digest }}" | tee image-ref.txt
       - uses: actions/upload-artifact@v3
         with:
           name: image-reference
           path: image-ref.txt
           if-no-files-found: error
+      - name: Remove registry credentials
+        if: always()
+        run: rm -rf -- "$DOCKER_CONFIG"
