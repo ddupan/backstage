@@ -52,7 +52,8 @@ auth:
         prompt: auto
 
 catalog:
-  # Overrides the default list locations from app-config.yaml as these contain example data.
-  # See https://backstage.io/docs/features/software-catalog/#adding-components-to-the-catalog for more details
-  # on how to get entities into the catalog.
-  locations: []
+  # The Gitea discovery provider only enumerates organizations; panxiao81 is a
+  # personal owner, so start with authenticated explicit locations instead.
+  locations:
+    - type: url
+      target: https://git.ddupan.top/panxiao81/backstage/raw/branch/main/catalog-info.yaml
