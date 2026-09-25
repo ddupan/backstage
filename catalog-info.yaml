@@ -5,6 +5,7 @@ metadata:
   description: Read-only developer portal for the homelab
   annotations:
     backstage.io/techdocs-ref: dir:.
+    backstage.io/kubernetes-id: homelab-backstage
 spec:
   type: website
   owner: guests
