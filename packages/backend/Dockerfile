@@ -15,10 +15,9 @@
 # Alternatively, there is also a multi-stage Dockerfile documented here:
 # https://backstage.io/docs/deployment/docker#multi-stage-build
 
-FROM node:24-trixie-slim
+FROM node:24-trixie-slim AS dependencies
 
-# Install sqlite3 dependencies. You can skip this if you don't use sqlite3 in the image,
-# in which case you should also move better-sqlite3 to "devDependencies" in package.json.
+# Compile the native production dependencies in a disposable build stage.
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update && \
@@ -56,7 +55,26 @@ RUN tar xzf skeleton.tar.gz && rm skeleton.tar.gz
 RUN --mount=type=cache,target=/home/node/.cache/yarn,sharing=locked,uid=1000,gid=1000 \
     yarn workspaces focus --all --production && yarn cache clean
 
-# Then copy the rest of the backend bundle, along with any other files we might want.
+FROM node:24-trixie-slim AS runtime
+
+# Native modules built above dynamically link to these runtime libraries. Keep the
+# compiler, headers, pkg-config, and Python out of the final image.
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+      libsecret-1-0 \
+      libsqlite3-0 && \
+    rm -rf /var/lib/apt/lists/*
+
+ENV NODE_ENV=production
+
+USER node
+WORKDIR /app
+
+COPY --from=dependencies --chown=node:node /app/ ./
+
+# Then copy the backend bundle and runtime configuration.
 COPY --chown=node:node packages/backend/dist/bundle.tar.gz app-config*.yaml ./
 RUN tar xzf bundle.tar.gz && rm bundle.tar.gz
 
