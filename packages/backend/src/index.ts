@@ -64,4 +64,7 @@ backend.add(import('@backstage/plugin-user-settings-backend'));
 backend.add(import('@backstage/plugin-notifications-backend'));
 backend.add(import('@backstage/plugin-signals-backend'));
 
+// Shared event bus used by catalog, signals, and other backend plugins.
+backend.add(import('@backstage/plugin-events-backend'));
+
 backend.start();

@@ -18,8 +18,10 @@ backend:
     credentials: true
 
   auth:
-    keys:
-      - secret: ${BACKEND_SECRET}
+    externalAccess:
+      - type: legacy
+        options:
+          secret: ${BACKEND_SECRET}
 
   # config options: https://node-postgres.com/apis/client
   database:
