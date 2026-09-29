@@ -22,6 +22,7 @@ backend:
       - type: legacy
         options:
           secret: ${BACKEND_SECRET}
+          subject: backstage-server
 
   # config options: https://node-postgres.com/apis/client
   database:
