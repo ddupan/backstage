@@ -20,7 +20,8 @@
     "lint": "backstage-cli repo lint --since origin/main",
     "lint:all": "backstage-cli repo lint",
     "prettier:check": "prettier --check .",
-    "ci": "yarn prettier:check && yarn lint:all && yarn tsc:full && yarn test:all --watchAll=false",
+    "config:check": "backstage-cli config:check --strict --lax --config app-config.yaml --config app-config.production.yaml",
+    "ci": "yarn prettier:check && yarn lint:all && yarn tsc:full && yarn test:all --watchAll=false && yarn config:check",
     "new": "backstage-cli new"
   },
   "backstage": {
