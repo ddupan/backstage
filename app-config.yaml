@@ -186,6 +186,12 @@ catalog:
 kubernetes:
   # see https://backstage.io/docs/features/kubernetes/configuration for kubernetes configuration options
 
+events:
+  # The events backend is always installed. In the default `auto` mode a single
+  # 404 (a plugin subscribing before the events plugin has started) disables the
+  # event bus for that plugin until restart; `always` retries with backoff.
+  useEventBus: always
+
 # see https://backstage.io/docs/permissions/getting-started for more on the permission framework
 permission:
   # setting this to `false` will disable permissions
