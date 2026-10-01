@@ -6,9 +6,6 @@ Kubernetes and Flux deployment declarations live in `homelab-infra`.
 See [the architecture boundaries](docs/architecture.md) before adding deployment
 or automation features.
 
-For the current production state, release procedure, operational checks, and
-follow-up work, see [the handoff document](docs/handoff.md).
-
 Create a local environment (do not commit tokens), then start the app:
 
 ```sh
