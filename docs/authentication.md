@@ -31,3 +31,11 @@ Required runtime variables are:
 After the deployment hostname is chosen, the Authelia client registration and
 ExternalSecret belong in `homelab-infra`, alongside the Backstage deployment
 declarations.
+
+## Authorization
+
+`packages/backend/src/modules/permissionPolicy.ts` replaces the allow-all
+policy: `user:default/panxiao81` may do anything, and every other signed-in user
+may only perform `read` permissions. Permissions without an action, such as
+`kubernetes.proxy` and `scaffolder.action.execute`, count as writes and are
+denied. Service-to-service calls bypass the policy.
