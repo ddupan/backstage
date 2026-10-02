@@ -1,0 +1,19 @@
+name: TechDocs
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - docs/**
+      - mkdocs.yml
+      - catalog-info.yaml
+
+jobs:
+  # The job id is part of this job's SPIFFE ID; OpenBao only lets jobs named
+  # `techdocs` read the TechDocs publisher credentials.
+  techdocs:
+    runs-on: [self-hosted, pod]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: panxiao81/ci-actions/publish-techdocs@v1
