@@ -75,6 +75,30 @@ techdocs:
 kubernetes:
   serviceLocatorMethod:
     type: multiTenant
+  # Flux objects shown on the entity Kubernetes tab, matched by the
+  # backstage.io/kubernetes-id label. Only served versions are listed: a missing
+  # apiVersion returns NOT_FOUND and surfaces as an error on the tab. Every kind
+  # here needs get/list in homelab-infra's backstage-read-only ClusterRole;
+  # HelmReleases are deliberately not readable.
+  customResources:
+    - group: kustomize.toolkit.fluxcd.io
+      apiVersion: v1
+      plural: kustomizations
+    - group: source.toolkit.fluxcd.io
+      apiVersion: v1
+      plural: gitrepositories
+    - group: source.toolkit.fluxcd.io
+      apiVersion: v1
+      plural: helmrepositories
+    - group: source.toolkit.fluxcd.io
+      apiVersion: v1
+      plural: ocirepositories
+    - group: image.toolkit.fluxcd.io
+      apiVersion: v1
+      plural: imagerepositories
+    - group: image.toolkit.fluxcd.io
+      apiVersion: v1
+      plural: imagepolicies
   clusterLocatorMethods:
     - type: config
       clusters:
