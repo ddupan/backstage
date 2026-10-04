@@ -8,6 +8,7 @@ on:
       - docs/**
       - mkdocs.yml
       - catalog-info.yaml
+      - .gitea/workflows/techdocs.yml
 
 jobs:
   # The job id is part of this job's SPIFFE ID; OpenBao only lets jobs named
@@ -16,4 +17,5 @@ jobs:
     runs-on: [self-hosted, pod]
     steps:
       - uses: actions/checkout@v4
-      - uses: panxiao81/ci-actions/publish-techdocs@v1
+      # Full URL: Gitea resolves short `uses:` names against github.com.
+      - uses: https://git.ddupan.top/panxiao81/ci-actions/publish-techdocs@v1
