@@ -54,12 +54,8 @@ auth:
         clientSecret: ${AUTH_OIDC_CLIENT_SECRET}
         prompt: auto
 
-catalog:
-  # The Gitea discovery provider only enumerates organizations; panxiao81 is a
-  # personal owner, so start with authenticated explicit locations instead.
-  locations:
-    - type: url
-      target: https://git.ddupan.top/panxiao81/backstage/raw/branch/main/catalog-info.yaml
+# Repositories are discovered by packages/backend/src/modules/giteaUserDiscovery.ts;
+# the upstream Gitea provider only enumerates organizations.
 
 # Each repository publishes its own docs from CI via
 # panxiao81/ci-actions/publish-techdocs; Backstage only reads the bucket.

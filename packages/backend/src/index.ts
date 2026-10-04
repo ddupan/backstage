@@ -28,7 +28,7 @@ backend.add(import('./modules/autheliaAuth'));
 
 // catalog plugin
 backend.add(import('@backstage/plugin-catalog-backend'));
-backend.add(import('@backstage/plugin-catalog-backend-module-gitea'));
+backend.add(import('./modules/giteaUserDiscovery'));
 backend.add(
   import('@backstage/plugin-catalog-backend-module-scaffolder-entity-model'),
 );
