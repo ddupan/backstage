@@ -8,5 +8,5 @@ metadata:
     backstage.io/kubernetes-id: homelab-backstage
 spec:
   type: website
-  owner: guests
+  owner: user:default/panxiao81
   lifecycle: experimental
