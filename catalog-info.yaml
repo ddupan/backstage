@@ -10,3 +10,10 @@ spec:
   type: website
   owner: user:default/panxiao81
   lifecycle: experimental
+  system: developer-portal
+  dependsOn:
+    - resource:shared-postgresql
+    - component:authelia
+    - component:gitea
+    - component:seaweedfs
+    - component:zot
