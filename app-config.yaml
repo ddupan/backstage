@@ -22,24 +22,41 @@ app:
     # Visit data is stored via UserSettings storage if available, otherwise browser localStorage.
     # - api:home/visits: true
     # - app-root-element:home/visit-listener: true
+    # Homelab web UIs. Per-service links (including API endpoints) live on the
+    # catalog entities in homelab-infra's catalog-info.yaml.
     - home-page-widget:home/toolkit:
         config:
           tools:
-            - url: https://backstage.io/docs
-              label: Docs
+            - url: https://git.ddupan.top
+              label: Gitea
+              icon: dashboard
+            - url: https://grafana.ad.ddupan.top
+              label: Grafana
+              icon: dashboard
+            - url: https://sso.ddupan.top/console
+              label: SSO
+              icon: dashboard
+            - url: https://auth.ddupan.top
+              label: Authelia
+              icon: dashboard
+            - url: https://bao.ad.ddupan.top:8200/ui/
+              label: OpenBao
+              icon: dashboard
+            - url: https://pve1.ad.ddupan.top:8006/
+              label: Proxmox
+              icon: dashboard
+            - url: https://incus.ad.ddupan.top
+              label: Incus
+              icon: dashboard
+            - url: https://nexus.ad.ddupan.top
+              label: Nexus
+              icon: dashboard
+            - url: https://dns.ad.ddupan.top
+              label: DNS
+              icon: dashboard
+            - url: /docs/default/component/homelab-wiki
+              label: Wiki
               icon: docs
-            - url: https://github.com/backstage/backstage
-              label: GitHub
-              icon: github
-            - url: https://github.com/backstage/backstage/blob/master/CONTRIBUTING.md
-              label: Contributing
-              icon: docs
-            - url: https://backstage.io/plugins
-              label: Plugins Directory
-              icon: kind:component
-            - url: https://github.com/backstage/backstage/issues/new/choose
-              label: Submit New Issue
-              icon: github
     - home-page-widget:home/world-clock:
         config:
           clockConfigs:
