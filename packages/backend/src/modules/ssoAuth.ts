@@ -12,12 +12,16 @@ export function userRefFromClaims(claims: Record<string, unknown>): string {
   const preferredUsername = claims.preferred_username;
 
   if (typeof preferredUsername !== 'string') {
-    throw new Error('Authelia did not return a preferred_username claim');
+    throw new Error(
+      'The identity provider did not return a preferred_username claim',
+    );
   }
 
   const username = preferredUsername.toLocaleLowerCase('en-US');
   if (!USERNAME_PATTERN.test(username)) {
-    throw new Error('Authelia returned an invalid preferred_username claim');
+    throw new Error(
+      'The identity provider returned an invalid preferred_username claim',
+    );
   }
 
   return stringifyEntityRef({
@@ -28,12 +32,12 @@ export function userRefFromClaims(claims: Record<string, unknown>): string {
 }
 
 /**
- * Authenticates humans directly against the same Authelia OIDC issuer as Gitea.
+ * Authenticates humans directly against the homelab OIDC issuer (AUTH_OIDC_METADATA_URL), as Gitea does.
  * This only establishes a Backstage identity; authorization remains separate.
  */
 export default createBackendModule({
   pluginId: 'auth',
-  moduleId: 'authelia-oidc-provider',
+  moduleId: 'sso-oidc-provider',
   register(reg) {
     reg.registerInit({
       deps: { providers: authProvidersExtensionPoint },

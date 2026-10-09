@@ -1,36 +1,32 @@
 # Authentication
 
-Backstage and Gitea are sibling relying parties of the same Authelia OIDC
-issuer. Backstage does not delegate login to Gitea.
+Backstage and Gitea are sibling relying parties of the same OIDC issuer (iam-login, `sso.ddupan.top`).
+Backstage does not delegate login to Gitea. The issuer comes from `AUTH_OIDC_METADATA_URL`, so moving
+to another issuer is a deployment change, not an image change.
 
-Register a confidential Authelia client with these properties:
+The client is registered in `homelab-infra` (`apps/iam-login/terraform/clients.tf`) with these properties:
 
 | setting                    | value                                                  |
 | -------------------------- | ------------------------------------------------------ |
 | client ID                  | `backstage`                                            |
 | scopes                     | `openid profile email groups`                          |
 | production redirect URI    | `https://<backstage-host>/api/auth/oidc/handler/frame` |
-| development redirect URI   | `http://localhost:7007/api/auth/oidc/handler/frame`    |
-| token endpoint auth method | `client_secret_post`                                   |
+| token endpoint auth method | `client_secret_basic`                                  |
+| PKCE                       | off: the oidc provider module does not send it         |
 
-The plaintext client secret is delivered to Backstage as
-`AUTH_OIDC_CLIENT_SECRET`; Authelia keeps the corresponding hash. Store the
-plaintext value in OpenBao and project it with External Secrets. Never commit
-either value here.
+Terraform writes the client secret to OpenBao and External Secrets projects it as
+`AUTH_OIDC_CLIENT_SECRET`. Never commit it here.
 
-The backend requires `preferred_username` and maps it to
+The backend requires `preferred_username` (read from userinfo) and maps it to
 `user:default/<preferred_username>`. Authentication only establishes identity.
 It does not grant Kubernetes, Flux, registry, or deployment permissions.
 
 Required runtime variables are:
 
+- `AUTH_OIDC_METADATA_URL` (the issuer's `/.well-known/openid-configuration`)
 - `AUTH_OIDC_CLIENT_ID`
 - `AUTH_OIDC_CLIENT_SECRET`
 - `AUTH_SESSION_SECRET` (at least 33 characters)
-
-After the deployment hostname is chosen, the Authelia client registration and
-ExternalSecret belong in `homelab-infra`, alongside the Backstage deployment
-declarations.
 
 ## Authorization
 

@@ -20,15 +20,15 @@ import catalogPlugin from '@backstage/plugin-catalog/alpha';
 import { navModule } from './modules/nav';
 import { homeModule } from './modules/home';
 
-const autheliaAuthApiRef = createApiRef<
+const ssoAuthApiRef = createApiRef<
   OpenIdConnectApi & ProfileInfoApi & BackstageIdentityApi & SessionApi
->().with({ id: 'auth.authelia' });
+>().with({ id: 'auth.sso' });
 
-const autheliaAuthApi = ApiBlueprint.make({
-  name: 'authelia',
+const ssoAuthApi = ApiBlueprint.make({
+  name: 'sso',
   params: defineParams =>
     defineParams({
-      api: autheliaAuthApiRef,
+      api: ssoAuthApiRef,
       deps: {
         discoveryApi: discoveryApiRef,
         oauthRequestApi: oauthRequestApiRef,
@@ -42,7 +42,7 @@ const autheliaAuthApi = ApiBlueprint.make({
           environment: configApi.getOptionalString('auth.environment'),
           provider: {
             id: 'oidc',
-            title: 'Authelia',
+            title: 'SSO',
             icon: () => null,
           },
           defaultScopes: ['openid', 'profile', 'email', 'groups'],
@@ -50,28 +50,28 @@ const autheliaAuthApi = ApiBlueprint.make({
     }),
 });
 
-const autheliaSignInPage = SignInPageBlueprint.make({
+const ssoSignInPage = SignInPageBlueprint.make({
   params: {
     loader: async () => props =>
       (
         <SignInPage
           {...props}
           provider={{
-            id: 'authelia',
-            title: 'Authelia',
+            id: 'sso',
+            title: 'SSO',
             message: 'Sign in with the homelab identity provider',
-            apiRef: autheliaAuthApiRef,
+            apiRef: ssoAuthApiRef,
           }}
         />
       ),
   },
 });
 
-const autheliaAuthModule = createFrontendModule({
+const ssoAuthModule = createFrontendModule({
   pluginId: 'app',
-  extensions: [autheliaAuthApi, autheliaSignInPage],
+  extensions: [ssoAuthApi, ssoSignInPage],
 });
 
 export default createApp({
-  features: [catalogPlugin, navModule, homeModule, autheliaAuthModule],
+  features: [catalogPlugin, navModule, homeModule, ssoAuthModule],
 });

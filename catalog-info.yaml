@@ -13,7 +13,7 @@ spec:
   system: developer-portal
   dependsOn:
     - resource:shared-postgresql
-    - component:authelia
+    - component:iam-login
     - component:gitea
     - component:seaweedfs
     - component:zot
