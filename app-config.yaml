@@ -30,7 +30,7 @@ app:
             - url: https://git.ddupan.top
               label: Gitea
               icon: dashboard
-            - url: https://grafana.ad.ddupan.top
+            - url: https://grafana.lab.ddupan.top
               label: Grafana
               icon: dashboard
             - url: https://sso.ddupan.top/console
@@ -174,7 +174,7 @@ auth:
   providers:
     oidc:
       development:
-        metadataUrl: https://auth.ddupan.top/.well-known/openid-configuration
+        metadataUrl: ${AUTH_OIDC_METADATA_URL}
         clientId: ${AUTH_OIDC_CLIENT_ID}
         clientSecret: ${AUTH_OIDC_CLIENT_SECRET}
         prompt: auto

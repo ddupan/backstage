@@ -24,7 +24,7 @@ backend.add(import('@backstage/plugin-techdocs-backend'));
 
 // auth plugin
 backend.add(import('@backstage/plugin-auth-backend'));
-backend.add(import('./modules/autheliaAuth'));
+backend.add(import('./modules/ssoAuth'));
 
 // catalog plugin
 backend.add(import('@backstage/plugin-catalog-backend'));

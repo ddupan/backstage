@@ -27,5 +27,5 @@ The catalog polls all repositories in `GITEA_ORG` for a root-level
 to Zot with the Gitea runner's short-lived `aud=zot` JWT-SVID; no long-lived
 registry password belongs in repository secrets.
 
-Human login goes directly to Authelia, the same OIDC issuer used by Gitea. See
+Human login goes directly to the homelab OIDC issuer (iam-login, sso.ddupan.top), as Gitea does. See
 [authentication](docs/authentication.md) for the client registration contract.

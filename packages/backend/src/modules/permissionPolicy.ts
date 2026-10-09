@@ -10,7 +10,7 @@ import {
 } from '@backstage/plugin-permission-node';
 import { policyExtensionPoint } from '@backstage/plugin-permission-node/alpha';
 
-// ponytail: hard-coded admin list; move to config or an Authelia group when
+// ponytail: hard-coded admin list; move to config or an identity-provider group when
 // there is more than one admin.
 const ADMINS = new Set(['user:default/panxiao81']);
 

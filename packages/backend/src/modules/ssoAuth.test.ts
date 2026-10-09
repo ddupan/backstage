@@ -1,7 +1,7 @@
-import { userRefFromClaims } from './autheliaAuth';
+import { userRefFromClaims } from './ssoAuth';
 
 describe('userRefFromClaims', () => {
-  it('maps an Authelia username to a Backstage user ref', () => {
+  it('maps the identity provider username to a Backstage user ref', () => {
     expect(userRefFromClaims({ preferred_username: 'PanXiao81' })).toBe(
       'user:default/panxiao81',
     );
