@@ -42,7 +42,7 @@ jobs:
     runs-on: homelab
     permissions:
       contents: read
-      id-token: write   # GitHub OIDC token, one half of the exchange's proof
+      id-token: write # GitHub OIDC token, one half of the exchange's proof
     env:
       # Flux tracks the digest behind :latest; old digests are left untagged for zot GC.
       IMAGE: zot-push.lab.ddupan.top/panxiao81/backstage:latest
