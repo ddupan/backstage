@@ -23,9 +23,10 @@ yarn start
 ```
 
 The catalog polls all repositories in `GITEA_ORG` for a root-level
-`catalog-info.yaml`. The token should be read-only for discovery. CI publishes
-to Zot with the Gitea runner's short-lived `aud=zot` JWT-SVID; no long-lived
-registry password belongs in repository secrets.
+`catalog-info.yaml`. The token should be read-only for discovery. CI (GitHub Actions) builds on a
+GitHub-hosted runner and pushes the image to Zot from the homelab ARC runner (`runs-on: homelab`) with a
+short-lived `aud=zot` JWT-SVID obtained through spire-identity-exchange; no long-lived registry password
+belongs in repository secrets.
 
 Human login goes directly to the homelab OIDC issuer (iam-login, sso.ddupan.top), as Gitea does. See
 [authentication](docs/authentication.md) for the client registration contract.

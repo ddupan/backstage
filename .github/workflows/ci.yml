@@ -1,0 +1,70 @@
+name: CI and image
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: corepack enable
+      - run: yarn install --immutable
+      - run: yarn ci
+      - run: yarn build:backend
+      - uses: actions/upload-artifact@v7
+        with:
+          name: backend-bundle
+          path: packages/backend/dist/*.tar.gz
+          if-no-files-found: error
+
+  # On the homelab ARC runner because zot is LAN-only and authorizes by SPIFFE ID. The SVID comes from
+  # spire-identity-exchange; its SPIRE entry (homelab-infra platform/spire/github-ci.yaml) matches only
+  # this repository's ci.yml on refs/heads/main for push events. Retry a failed push with "Re-run jobs".
+  image:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: verify
+    runs-on: homelab
+    permissions:
+      contents: read
+      id-token: write   # GitHub OIDC token, one half of the exchange's proof
+    env:
+      # Flux tracks the digest behind :latest; old digests are left untagged for zot GC.
+      IMAGE: zot-push.lab.ddupan.top/panxiao81/backstage:latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v7
+        with:
+          name: backend-bundle
+          path: packages/backend/dist
+      - id: svid
+        uses: ddupan/ci-actions/spiffe-jwt-svid@v1
+        with:
+          audience: zot
+      - name: Build and push
+        env:
+          SVID: ${{ steps.svid.outputs.svid }}
+        run: |
+          export DOCKER_CONFIG
+          DOCKER_CONFIG=$(mktemp -d)
+          trap 'rm -rf -- "$DOCKER_CONFIG"' EXIT
+          printf '%s' "$SVID" | docker login zot-push.lab.ddupan.top --username zot --password-stdin >/dev/null
+          docker build -q -f packages/backend/Dockerfile -t "$IMAGE" .
+          docker push -q "$IMAGE"
