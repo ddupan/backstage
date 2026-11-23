@@ -1,0 +1,28 @@
+name: TechDocs
+
+# Push only: the publisher identity's SPIRE entry matches push events on main. Retry with "Re-run jobs".
+on:
+  push:
+    branches: [main]
+    paths:
+      - docs/**
+      - mkdocs.yml
+      - catalog-info.yaml
+      - .github/workflows/techdocs.yml
+
+permissions:
+  contents: read
+
+jobs:
+  # The file name is part of this job's SPIFFE ID (…/backstage/techdocs); OpenBao role
+  # ci-techdocs-publisher only accepts IDs ending in /techdocs.
+  techdocs:
+    runs-on: homelab
+    permissions:
+      contents: read
+      id-token: write # GitHub OIDC token, one half of the exchange's proof
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: ddupan/ci-actions/publish-techdocs@v1
